@@ -1,3 +1,4 @@
+const res = require("express/lib/response");
 const db = require("../database/models");
 const model = require("../model/MovieModel");
 
@@ -9,10 +10,10 @@ const controller = {
      })
      .catch((err) => res.render('error'))
     },
-     /* details: (req, res, next) => {
+    detail: (req, res, next) => {
         id=req.params.id
     movie.findById(id)
-    movie.then((movies) => {
+    .then((movies) => {
         for(let i=0; i<movies.length; i++){
             if (movies[i].id == id) {
                 res.render('moviesDetail',{movies:movies[i]})
@@ -24,13 +25,31 @@ const controller = {
     .catch((err) =>{
         next(err)
       }); 
-  }, */
-/*     new (req, res, next) => {
-        return []
+  },
+    new: (req, res, next) => {
+        model.findAll({
+        order : [
+            ['title', 'ASC']
+        ]
+        .then((movies) => {
+            res.render('newestMovie', {movies:movies})
+        })
+        .catch((err) =>{
+            next(err)})
+        }) 
     },
-    recommended (req, res, next) => {
-        return []
-    } */
+    recommended: (req, res, next) => {
+        model.findAll({
+            where: {
+                date_release:{
+                limit: 10},
+            order: [
+             ['updatedAt', 'DESC']
+            ] 
+            }
+        })
+      
+    }
 };
 
 module.exports = controller;
